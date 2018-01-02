@@ -1,2 +1,2 @@
-test: test.c
-	gcc test.c -o test `pkg-config --cflags --libs allegro-5`
+blasteroids: blasteroids.c
+	gcc blasteroids.c -o blasteroids `pkg-config --cflags --libs allegro-5`
