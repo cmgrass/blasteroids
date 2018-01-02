@@ -2,6 +2,8 @@
 #include <errno.h>
 #include <string.h>
 #include <allegro5/allegro.h>
+#include <allegro5/allegro_primitives.h>
+#include "spaceship.h"
 
 void error(char *msg)
 {
@@ -40,21 +42,23 @@ int init_display(ALLEGRO_DISPLAY *display, int w, int h)
 
 int main(int argc, char *argv[])
 {
-  unsigned char ijk = 0;
   int status = 0;
   ALLEGRO_DISPLAY *display = NULL;
+  spaceship_t spaceship;
+  spaceship_t *spaceship_p = &spaceship;
 
   status = init_display(display, 640, 480);
 
   /* testing code */
-  for (ijk = 0; ijk < 4; ijk ++) {
-    al_rest(0.25);  /* sleep for 3 seconds */
-    al_clear_to_color(al_map_rgb(0x00, 0x80, 0x80));
-    al_flip_display();
-    al_rest(0.25);
-    al_clear_to_color(al_map_rgb(0x00, 0x00, 0x00));
-    al_flip_display();
-  }
+  status = ship_init(spaceship_p, 0x16, 0xE2, 0x49);
+
+  al_clear_to_color(al_map_rgb(0x00, 0x00, 0x00));
+  al_draw_line(-16, 18, 0, -22, spaceship_p->color, 3.0f);
+  al_draw_line(0, -22, 16, 18, spaceship_p->color, 3.0f);
+  al_draw_line(-12, 8, -2, 8, spaceship_p->color, 3.0f);
+  al_draw_line(12, 8, 2, 8, spaceship_p->color, 3.0f);
+  al_flip_display();
+  al_rest(3);
 
   /* Clean-up */
   al_destroy_display(display);
