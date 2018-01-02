@@ -9,20 +9,15 @@ void error(char *msg)
   exit(1);
 }
 
-int main(int argc, char *argv[])
+int init_display(ALLEGRO_DISPLAY *display, int w, int h)
 {
-  char ijk = 0;
-  ALLEGRO_DISPLAY *display = NULL;
-
-  puts("Hasbro intl. corp.");
-
   /* Initialize Allegro Library */
   if (!al_init()) {
     error("Failed to initialize Allegro");
   }
 
   /* Create Display Window */
-  display = al_create_display(640, 480);
+  display = al_create_display(w, h);
   if (!display) {
     error("Failed to create display");
   }
@@ -40,6 +35,17 @@ int main(int argc, char *argv[])
   */
   al_flip_display();
 
+  return 0;
+} /* init_display */
+
+int main(int argc, char *argv[])
+{
+  unsigned char ijk = 0;
+  int status = 0;
+  ALLEGRO_DISPLAY *display = NULL;
+
+  status = init_display(display, 640, 480);
+
   /* testing code */
   for (ijk = 0; ijk < 4; ijk ++) {
     al_rest(0.25);  /* sleep for 3 seconds */
@@ -53,6 +59,5 @@ int main(int argc, char *argv[])
   /* Clean-up */
   al_destroy_display(display);
 
-  puts("Woohawh!");
   return 0;
 }
