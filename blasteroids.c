@@ -25,7 +25,9 @@ int init_display(ALLEGRO_DISPLAY *display, int w, int h)
   }
 
   /* Initialize Display Color */
+/*
   al_clear_to_color(al_map_rgb(0, 0, 0));
+*/
 
   /* Activate the modified display */
   /*
@@ -35,7 +37,9 @@ int init_display(ALLEGRO_DISPLAY *display, int w, int h)
     used for displaying. The buffer previously used as a display becomes
     available for drawing.
   */
+/*
   al_flip_display();
+*/
 
   return 0;
 } /* init_display */
@@ -43,25 +47,72 @@ int init_display(ALLEGRO_DISPLAY *display, int w, int h)
 int main(int argc, char *argv[])
 {
   int status = 0;
-  ALLEGRO_DISPLAY *display = NULL;
   spaceship_t spaceship;
   spaceship_t *spaceship_p = &spaceship;
+  ALLEGRO_DISPLAY *display = NULL;
+  ALLEGRO_EVENT_QUEUE *event_queue = NULL;
+  ALLEGRO_EVENT event;
+  ALLEGRO_TIMEOUT timeout;
 
+  /* Initialize Allegro */
   status = init_display(display, 640, 480);
 
-  /* testing code */
+  /* Setup Event Queue */
+  event_queue = al_create_event_queue();
+  if (!event_queue) {
+    error("Could not create event queue");
+  }
+
+  puts("122");
+
+  al_register_event_source(event_queue, al_get_display_event_source(display));
+
+  puts("232");
+
+  al_init_timeout(&timeout, 0.06);
+
+  puts("531");
+
+  /* ----- T E S T ----- */
+  /* Initialize Ship Object */
   status = ship_init(spaceship_p, 0x16, 0xE2, 0x49);
 
+  puts("675");
+
   al_clear_to_color(al_map_rgb(0x00, 0x00, 0x00));
-  al_draw_line(-16, 18, 0, -22, spaceship_p->color, 3.0f);
-  al_draw_line(0, -22, 16, 18, spaceship_p->color, 3.0f);
-  al_draw_line(-12, 8, -2, 8, spaceship_p->color, 3.0f);
-  al_draw_line(12, 8, 2, 8, spaceship_p->color, 3.0f);
+
+  puts("789");
+
   al_flip_display();
+
+  puts("801");
+
+  /* Game Loop */
+  while(1) {
+    bool recvd_event = al_wait_for_event_until(event_queue, &event, &timeout);
+
+    puts("event cleared");
+
+    /* Check for exit event */
+    if (recvd_event && (event.type == ALLEGRO_EVENT_DISPLAY_CLOSE)) {
+      puts("Exiting");
+      break;
+    }
+
+    al_clear_to_color(al_map_rgb(0x00, 0x00, 0x00));
+    al_draw_line(-16, 18, 0, -22, spaceship_p->color, 3.0f);
+    al_draw_line(0, -22, 16, 18, spaceship_p->color, 3.0f);
+    al_draw_line(-12, 8, -2, 8, spaceship_p->color, 3.0f);
+    al_draw_line(12, 8, 2, 8, spaceship_p->color, 3.0f);
+    al_flip_display();
+
+  } /* while */
+
   al_rest(3);
 
   /* Clean-up */
   al_destroy_display(display);
+  al_destroy_event_queue(event_queue);
 
   return 0;
 }
