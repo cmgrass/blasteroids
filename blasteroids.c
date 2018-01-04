@@ -49,13 +49,19 @@ int main(int argc, char *argv[])
   int status = 0;
   spaceship_t spaceship;
   spaceship_t *spaceship_p = &spaceship;
-  ALLEGRO_DISPLAY *display = NULL;
-  ALLEGRO_EVENT_QUEUE *event_queue = NULL;
+  ALLEGRO_DISPLAY *display;
+  ALLEGRO_EVENT_QUEUE *event_queue;
   ALLEGRO_EVENT event;
   ALLEGRO_TIMEOUT timeout;
 
   /* Initialize Allegro */
+/*
   status = init_display(display, 640, 480);
+*/
+
+  al_init();
+
+  display = al_create_display(800, 600);
 
   /* Setup Event Queue */
   event_queue = al_create_event_queue();
