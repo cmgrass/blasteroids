@@ -11,7 +11,7 @@ void error(char *msg)
   exit(1);
 }
 
-int init_display(ALLEGRO_DISPLAY *display, int w, int h)
+int init_display(ALLEGRO_DISPLAY **display_p, int w, int h)
 {
   /* Initialize Allegro Library */
   if (!al_init()) {
@@ -19,8 +19,8 @@ int init_display(ALLEGRO_DISPLAY *display, int w, int h)
   }
 
   /* Create Display Window */
-  display = al_create_display(w, h);
-  if (!display) {
+  *display_p = al_create_display(w, h);
+  if (!(&display_p)) {
     error("Failed to create display");
   }
 
@@ -49,55 +49,41 @@ int main(int argc, char *argv[])
   int status = 0;
   spaceship_t spaceship;
   spaceship_t *spaceship_p = &spaceship;
-  ALLEGRO_DISPLAY *display;
-  ALLEGRO_EVENT_QUEUE *event_queue;
+  ALLEGRO_DISPLAY *display_p;
+  ALLEGRO_EVENT_QUEUE *event_queue_p;
   ALLEGRO_EVENT event;
   ALLEGRO_TIMEOUT timeout;
 
   /* Initialize Allegro */
-/*
-  status = init_display(display, 640, 480);
-*/
+  status = init_display(&display_p, 640, 480);
 
+/*
   al_init();
 
-  display = al_create_display(800, 600);
+  display_p = al_create_display(800, 600);
+*/
 
   /* Setup Event Queue */
-  event_queue = al_create_event_queue();
-  if (!event_queue) {
+  event_queue_p = al_create_event_queue();
+  if (!event_queue_p) {
     error("Could not create event queue");
   }
 
-  puts("122");
-
-  al_register_event_source(event_queue, al_get_display_event_source(display));
-
-  puts("232");
+  al_register_event_source(event_queue_p, al_get_display_event_source(display_p));
 
   al_init_timeout(&timeout, 0.06);
-
-  puts("531");
 
   /* ----- T E S T ----- */
   /* Initialize Ship Object */
   status = ship_init(spaceship_p, 0x16, 0xE2, 0x49);
 
-  puts("675");
-
   al_clear_to_color(al_map_rgb(0x00, 0x00, 0x00));
-
-  puts("789");
 
   al_flip_display();
 
-  puts("801");
-
   /* Game Loop */
   while(1) {
-    bool recvd_event = al_wait_for_event_until(event_queue, &event, &timeout);
-
-    puts("event cleared");
+    bool recvd_event = al_wait_for_event_until(event_queue_p, &event, &timeout);
 
     /* Check for exit event */
     if (recvd_event && (event.type == ALLEGRO_EVENT_DISPLAY_CLOSE)) {
@@ -117,8 +103,8 @@ int main(int argc, char *argv[])
   al_rest(3);
 
   /* Clean-up */
-  al_destroy_display(display);
-  al_destroy_event_queue(event_queue);
+  al_destroy_display(display_p);
+  al_destroy_event_queue(event_queue_p);
 
   return 0;
 }
