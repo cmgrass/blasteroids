@@ -11,7 +11,8 @@ void error(char *msg)
   exit(1);
 }
 
-int init_display(ALLEGRO_DISPLAY **display_p, int w, int h)
+int init_display(ALLEGRO_DISPLAY **display_p,
+                 ALLEGRO_EVENT_QUEUE **event_queue_p, int w, int h)
 {
   /* Initialize Allegro Library */
   if (!al_init()) {
@@ -23,6 +24,15 @@ int init_display(ALLEGRO_DISPLAY **display_p, int w, int h)
   if (!(*display_p)) {
     error("Failed to create display");
   }
+
+  /* Setup Event Queue */
+  *event_queue_p = al_create_event_queue();
+  if (!(*event_queue_p)) {
+    error("Could not create event queue");
+  }
+
+  al_register_event_source(*event_queue_p,
+                           al_get_display_event_source(*display_p));
 
   /* Initialize Display Color */
   al_clear_to_color(al_map_rgb(0, 0, 0));
@@ -51,15 +61,7 @@ int main(int argc, char *argv[])
   ALLEGRO_TIMEOUT timeout;
 
   /* Initialize Allegro */
-  status = init_display(&display_p, 640, 480);
-
-  /* Setup Event Queue */
-  event_queue_p = al_create_event_queue();
-  if (!event_queue_p) {
-    error("Could not create event queue");
-  }
-
-  al_register_event_source(event_queue_p, al_get_display_event_source(display_p));
+  status = init_display(&display_p, &event_queue_p, 640, 480);
 
   al_init_timeout(&timeout, 0.06);
 
