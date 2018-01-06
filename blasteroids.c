@@ -20,14 +20,12 @@ int init_display(ALLEGRO_DISPLAY **display_p, int w, int h)
 
   /* Create Display Window */
   *display_p = al_create_display(w, h);
-  if (!(&display_p)) {
+  if (!(*display_p)) {
     error("Failed to create display");
   }
 
   /* Initialize Display Color */
-/*
   al_clear_to_color(al_map_rgb(0, 0, 0));
-*/
 
   /* Activate the modified display */
   /*
@@ -37,9 +35,7 @@ int init_display(ALLEGRO_DISPLAY **display_p, int w, int h)
     used for displaying. The buffer previously used as a display becomes
     available for drawing.
   */
-/*
   al_flip_display();
-*/
 
   return 0;
 } /* init_display */
@@ -57,12 +53,6 @@ int main(int argc, char *argv[])
   /* Initialize Allegro */
   status = init_display(&display_p, 640, 480);
 
-/*
-  al_init();
-
-  display_p = al_create_display(800, 600);
-*/
-
   /* Setup Event Queue */
   event_queue_p = al_create_event_queue();
   if (!event_queue_p) {
@@ -76,10 +66,9 @@ int main(int argc, char *argv[])
   /* ----- T E S T ----- */
   /* Initialize Ship Object */
   status = ship_init(spaceship_p, 0x16, 0xE2, 0x49);
-
-  al_clear_to_color(al_map_rgb(0x00, 0x00, 0x00));
-
-  al_flip_display();
+  if (status) {
+    error("Could not create spaceship");
+  }
 
   /* Game Loop */
   while(1) {
