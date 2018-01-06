@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <errno.h>
 #include <string.h>
+#include <math.h>
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_primitives.h>
 #include "spaceship.h"
@@ -84,6 +85,7 @@ int main(int argc, char *argv[])
   while(1) {
     bool recvd_event = al_wait_for_event_until(event_queue_p, &event, &timeout);
 
+    /* Process Events */
     if (recvd_event) {
     puts("EVENT!");
       switch (event.type) {
@@ -107,9 +109,13 @@ int main(int argc, char *argv[])
           break;
 
         case ALLEGRO_KEY_UP:
+          status = ship_accelerate(spaceship_p, ACCEL);
+          printf("[DEBUG] ship accelerating: %3.2f\n", spaceship_p->speed);
           break;
 
         case ALLEGRO_KEY_DOWN:
+          status = ship_accelerate(spaceship_p, DECEL);
+          printf("[DEBUG] ship decelerating: %3.2f\n", spaceship_p->speed);
           break;
 
         case ALLEGRO_KEY_SPACE:
@@ -123,15 +129,16 @@ int main(int argc, char *argv[])
       }
     }
 
+    /* Non-event state processing */
+    spaceship_p->sy -= (cosf(spaceship_p->heading)*spaceship_p->speed);
+    spaceship_p->sx += (sinf(spaceship_p->heading)*spaceship_p->speed);
+    printf("[DEBUG] speed: %3.2f, heading: %3.2f, sx = %3.2f, sy = %3.2f\n",
+           spaceship_p->speed, spaceship_p->heading, spaceship_p->sx,
+           spaceship_p->sy);
+
     /* Update screen */
     al_clear_to_color(al_map_rgb(0x00, 0x00, 0x00));
     status = ship_draw(spaceship_p);
-/*
-    al_draw_line(-16, 18, 0, -22, spaceship_p->color, 3.0f);
-    al_draw_line(0, -22, 16, 18, spaceship_p->color, 3.0f);
-    al_draw_line(-12, 8, -2, 8, spaceship_p->color, 3.0f);
-    al_draw_line(12, 8, 2, 8, spaceship_p->color, 3.0f);
-*/
     al_flip_display();
 
   } /* while */
